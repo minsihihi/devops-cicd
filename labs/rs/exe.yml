@@ -1,0 +1,60 @@
+# RC로 생성했다가, RS로 넘기는 실습
+
+# Nginx:1.14.2 Pod 3개로 구성된 Replication Controller를 작성하세요
+# Replication Controller만 삭제하세요 (Pod는 유지)
+# 남겨진 Nginx Pod를 관리하는 ReplicaSet을 작성하되 replica 4개로 구성하세요
+# Nginx Pod를 6개로 Scale Out 하세요
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-rs
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+
+# cli
+# # 1. RC 생성
+# kubectl apply -f nginx-rc.yaml
+
+# # 2. RC 상태 확인
+# kubectl get rc
+# kubectl get pods -l app=nginx
+# >> nginx-rc-4ttz5   1/1     Running   0          6m17s
+# >> nginx-rc-fq2tz   1/1     Running   0          6m17s
+# >> nginx-rc-llss2   1/1     Running   0          6m17s
+
+# # 3. RC만 삭제 (Pod 유지)
+# kubectl delete rc nginx-rc --cascade=orphan
+# >> rc는 사라지고 pod는 남는다.
+
+# # 4. 남은 Pod 확인
+# kubectl get pods -l app=nginx
+
+# # 5. RS 생성
+# kubectl apply -f nginx-rs.yaml
+
+
+# # 6. RS 상태 확인
+# kubectl get rs
+# kubectl get pods -l app=nginx
+
+# # 7. Scale Out
+# kubectl scale rs nginx-rs --replicas=6
+
+# # 8. 최종 확인
+# kubectl get rs
+# kubectl get pods -l app=nginx

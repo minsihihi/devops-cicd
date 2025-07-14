@@ -1,0 +1,30 @@
+# RC보다 다양한 표현식을 가지고, 감시대상을 세분화하여 지정할 수 있는 (label 이상으로)
+# Replication Set 실습
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: frontend
+  labels:
+    app: guestbook # app이 guestbook이고
+    tier: frontend # tier가 frontend인 것들 중에
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+    matchExpressions:
+      - {key: env, operator: In, values: [prod]} # 환경은 반드시 prod
+      - {key: priority, operator: NotIn, values: [low]} # priority가 low가 아닌 => medium OR high
+  template:
+    metadata:
+      labels:
+        tier: frontend
+        env: prod
+        priority: high
+    spec:
+      containers:
+      - name: nginx-frontend
+        image: nginx:1.29
+        ports:
+        - containerPort: 80
