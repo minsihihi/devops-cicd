@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: goapp-pod
+  labels:
+    env: prod
+    tier: backend
+spec:
+  containers:
+  - image: dangtong/goapp
+    name: goapp-container
+    ports:
+    - containerPort: 8080
+      protocol: TCP
+
+# bitnami/apache 이미지로 Pod 를 만들고 tier=FronEnd, app=apache 라벨 정보를 포함하세요
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: label-pod
+  labels:
+    tier: FronEnd
+    app: apache
+spec:
+  containers:
+  - image: bitnami/apache
+    name: label-container
+    ports:
+    - containerPort: 8080
+      protocol: TCP
