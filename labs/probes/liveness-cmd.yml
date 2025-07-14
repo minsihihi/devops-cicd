@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: liveness-command-pod
+spec:
+  containers:
+  - name: liveness-command
+    # busybox : OS를 container에 띄운다고 생각했을 때, start 명령어가 없기 때문에 (only booting) 바로 죽음
+    # 그래서 sleep infinity를 주는데, 이를 관례로 "busybox"라고 한다.
+    image: busybox:latest
+    # https로 확인하는게 아니고 cmd 수행으로 확인
+    # container에 매개변수로 명령어 수행하라고 넘김
+    # 일단 healthy를 만들고, 30초 sleep 후 지워짐 (3번의 health-check)
+    command: ["/bin/sh", "-c", "touch /tmp/healthy; sleep 30; rm -rf /tmp/healthy; sleep 600"]
+    livenessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+      # 헬스 체크 10초 걸림
+      # 위에 sleep 30초니까 총 3번의 health check 기회를 주는 것과 동일하다.
+      initialDelaySeconds: 5
+      periodSeconds: 5

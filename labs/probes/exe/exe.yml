@@ -1,0 +1,53 @@
+# 아래 조건을 만족하는 liveness Pod를 생성하세요:
+
+# Pod 이름: liveness-demo
+# 이미지: nginx:latest
+# Liveness probe: HTTP GET /health (포트 80)
+# 초기 지연: 10초, 주기: 5초, 타임아웃: 3초, 실패 임계값: 3
+
+# 비연결지향형 app에 사용되는 경우가 많다
+# 끊겨도 지장 없는 app에 사용
+apiVersion: v1
+kind: Pod
+metadata:
+  name: liveness-demo
+spec:
+  containers:
+  - name: liveness-demo
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 80
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+
+
+# 아래 조건을 만족하는 readiness Pod를 생성하세요:
+
+# Pod 이름: readiness-demo
+# 이미지: redis:7.2
+# Readiness probe: TCP 소켓 (포트 6379)
+# 초기 지연: 5초, 주기: 10초
+
+# 연결지향형 app에 사용되는 경우가 많다.
+# 끊기면 안되는 app들
+apiVersion: v1
+kind: Pod
+metadata:
+  name: readiness-demo
+spec:
+  containers:
+  - name: readiness-demo
+    image: redis:7.2
+    ports:
+    - containerPort: 6379
+    readinessProbe:
+      tcpSocket:
+        port: 6379
+      initialDelaySeconds: 5
+      periodSeconds: 10
