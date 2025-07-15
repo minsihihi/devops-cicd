@@ -1,0 +1,33 @@
+# app2-deploy.yml
+# app2 서비스
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app2-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app2
+  template:
+    metadata:
+      labels:
+        app: app2
+    spec:
+      containers:
+      - name: app2
+        image: httpd:2.4
+        ports:
+        - containerPort: 80
+---
+# app2-svc.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: app2-service
+spec:
+  selector:
+    app: app2
+  ports:
+  - port: 80
+    targetPort: 80
