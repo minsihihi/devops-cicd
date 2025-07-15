@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: alb-ingress-class
+spec:
+  controller: ingress.k8s.aws/alb
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  ingressClassName: "alb-ingress-class"
+  rules:
+  # host는 가장 먼저 touch 되는 url이다.
+  # 아래 url를 DNS routing table에서 찾는다. (없을 경우 )
+  # 아래 host url일 경우에 
+  - host: nginx.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        # 이 서비스로 접속한다.
+        backend:
+          service:
+            name: nginx-service
+            port:
+              number: 80
+
+
+# nslookup aws:url 하면 왜 IP가 3가지 뜨는가?
+# /code/devops-cicd-apps/infra/cwave-aws-eks/variable.tf 에서 aws availability_zones이 a, b, c 3가지로 나뉘어 서로 백업으로 작용
+# 각 zone마다 subnet 하나씩 있음
+# 그 zone을 node 3개가 하나씩 물고 -> kubernetes cluster로 구성됨
+# 그 node를 LB가 물어서, aws가 3개의 IP(subnet 3개)로 분배한다.
