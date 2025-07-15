@@ -1,0 +1,26 @@
+# daemonSet -- pod를 포함한다.
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: goapp-on-ssd
+spec:
+  # RC/RS와 유사하게 감시자를 갖고 있다.
+  selector:
+    matchLabels:
+      app: goapp-pod
+  template:
+    metadata:
+      labels:
+        app: goapp-pod
+    spec:
+      # nodeSelector - kuber node가 label를 갖고 있어야하는데,
+      # disk가 ssd 라벨을 가져야 한다는 뜻, 아래와 같이 할당한다.
+      # kubectl get no
+      # kubectl label node ip-10-1-5-250.ap-northeast-2.compute.internal disk=ssd 
+      # kubectl get ds,po => 실행 시 disk node가 ssd로 라벨링 된 1개의 pod가 뜬다. 
+      nodeSelector:
+        disk: ssd
+      containers:
+      - name: goapp-container
+        image: dangtong/goapp
