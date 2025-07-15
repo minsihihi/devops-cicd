@@ -38,3 +38,8 @@ spec:
     targetPort: 8080
   selector:
     app: nodeapp-pod
+
+
+
+# aws elbv2 describe-load-balancers 
+# CMD로 LB된 url 확인하고, 그 경로로 접속이 가능하다.
