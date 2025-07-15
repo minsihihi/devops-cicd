@@ -1,0 +1,25 @@
+# headless-svc.yml
+# headless: head에 IP가 없고 서비스(backend 등)만 있다.
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-headless
+  labels:
+    app: nginx
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    app: nginx
+
+# IP조회 시 묶여있는 pod 3개 IP 다 나온다
+# kubectl run test-dns --image=busybox:1.28 --rm -it --restart=Never -- nslookup nginx-headless
+# Server:    172.20.0.10
+# Address 1: 172.20.0.10 kube-dns.kube-system.svc.cluster.local
+
+# Name:      nginx-headless
+# Address 1: 10.1.5.105 web-0.nginx.default.svc.cluster.local
+# Address 2: 10.1.5.143 web-2.nginx.default.svc.cluster.local
+# Address 3: 10.1.6.218 web-1.nginx.default.svc.cluster.local

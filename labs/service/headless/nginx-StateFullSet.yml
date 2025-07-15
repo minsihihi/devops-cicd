@@ -1,0 +1,32 @@
+# nginx-sts.yml
+# deployment와 유사하다고 생각
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+spec:
+# 이런 이름의 url이 dns에 저장됨
+  serviceName: "nginx"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+          name: web
+
+# dns 확인용: kubectl run test-dns --image=busybox:1.28 --rm -it --restart=Never -- nslookup nginx
+# Name:      nginx
+# Address 1: 10.1.5.143 web-2.nginx.default.svc.cluster.local
+# Address 2: 10.1.5.105 web-0.nginx.default.svc.cluster.local
+# Address 3: 10.1.6.218 web-1.nginx.default.svc.cluster.local
+# >> svc nave으로 url이 생성된 모습

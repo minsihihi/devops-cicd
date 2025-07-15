@@ -1,0 +1,24 @@
+# headless-svc.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-head
+  labels:
+    app: nginx
+spec:
+  ports:
+  - port: 80
+    name: web
+  # headless에서 아래 행만 삭제해서 clusterIP를 가리키게 함 == head
+  # clusterIP: None
+  selector:
+    app: nginx
+
+
+# IP조회 시 clusterIP 하나만 나온다
+# kubectl run test-dns --image=busybox:1.28 --rm -it --restart=Never -- nslookup nginx-head
+# Server:    172.20.0.10
+# Address 1: 172.20.0.10 kube-dns.kube-system.svc.cluster.local
+
+# Name:      nginx-head
+# Address 1: 172.20.10.143 nginx-head.default.svc.cluster.local
