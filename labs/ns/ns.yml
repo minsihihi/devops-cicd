@@ -1,3 +1,7 @@
+# namespace 생성/삭제
+# namespace == 논리적인 격리, 리소스 그룹을 격리
+# naming-> namespace 내에서 고유하나, 타 namespace에는 중복돼도 된다.
+# !!ns 삭제 시 내부 모든 resource가 삭제된다!!
 apiVersion: v1
 kind: Namespace
 metadata:
