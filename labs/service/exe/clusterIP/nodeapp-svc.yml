@@ -1,0 +1,12 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodeapp-exe-service
+spec:
+  ports:
+  - port: 80
+    targetPort: 8082
+  # deploy의 template/label과 동일해야 selection이 된다!!
+  selector:
+    app: nodeapp-exe-pod

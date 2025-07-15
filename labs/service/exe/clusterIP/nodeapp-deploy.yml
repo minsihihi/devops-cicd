@@ -1,0 +1,22 @@
+# nginx:latest 이미지를 이용하여 Replica=3 인 Deployment 를 생성하세요
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodeapp-exe
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nodeapp-exe-pod
+  template:
+    metadata:
+      labels:
+        # svc의 selector tag과 동일해야 한다!!
+        app: nodeapp-exe-pod
+    spec:
+      containers:
+      - name: nodeapp-exe-container
+        image: nginx:latest
+        ports:
+        - containerPort: 8082
