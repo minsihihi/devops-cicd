@@ -1,0 +1,23 @@
+# pod 생성
+# replica 3개
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodeapp-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nodeapp-pod
+  template:
+    metadata:
+      labels:
+        # svc의 selector tag과 동일해야 한다.
+        app: nodeapp-pod
+    spec:
+      containers:
+      - name: nodeapp-container
+        image: dangtong/nodeapp
+        ports:
+        - containerPort: 8080
