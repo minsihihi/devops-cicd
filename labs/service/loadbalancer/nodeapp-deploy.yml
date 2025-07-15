@@ -1,5 +1,5 @@
 # 이번에는 yml 하나로 ---구분선 사용해서 합침
-
+# 하나 파일이 2개처럼 동작
 apiVersion: apps/v1
 kind: Deployment
 metadata:
