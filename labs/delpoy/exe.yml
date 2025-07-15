@@ -1,0 +1,50 @@
+# 1. 아래 조건을 만족하는 Deployment를 생성하세요:
+
+# Deployment 이름: httpd-deployment
+# 이미지: httpd:2.4
+# Replica: 3개
+# 포트: 80
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-deployment
+  labels:
+    app: httpd
+spec:
+  replicas: 3
+  # 배포 전략 변경~!!!
+  strategy:
+    type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 2
+  selector:
+    matchLabels:
+      app: httpd
+  template:
+    metadata:
+      labels:
+        app: httpd
+    spec:
+      containers:
+      - name: httpd
+        image: httpd:2.4
+        ports
+        - containerPort: 80
+
+# 1.5. apply 후 annotate로 cause를 initial create로 작성
+
+# 2. 생성된 Deployment의 이미지를 httpd:latest로 업데이트하고 change cause를 기록하세요. + 확인
+# 버전 변경 >> kubectl set image deployment/httpd-deployment httpd=httpd:latest
+# cause 작성 >> kubectl annotate deployment/httpd-deployment kubernetes.io/chage-cause="image version update"
+# cause 확인 >> kubectl rollout history deployment/httpd-deployment
+# 업뎃 상태 확인 >> kubectl rollout update deployment/httpd-deployment
+
+# 3. Deployment를 5개 replica로 스케일 아웃하세요.
+# >> kubectl scale deployment httpd-deployment --replicas=5
+
+# 4. Deployment 롤백 (Change Cause 확인)
+# >> kubectl rollout undo deployment/httpd-deployment
+# 특정 버전 상세 정보 확인 >> kubectl rollout history deployment/httpd-deployment --revision=2
+
