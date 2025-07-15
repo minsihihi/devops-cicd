@@ -19,6 +19,7 @@ spec:
       # kubectl get no
       # kubectl label node ip-10-1-5-250.ap-northeast-2.compute.internal disk=ssd 
       # kubectl get ds,po => 실행 시 disk node가 ssd로 라벨링 된 1개의 pod가 뜬다. 
+      # kubectl get no -L disk 실행 시 disk로 라벨링 된 node가 뜬다.
       nodeSelector:
         disk: ssd
       containers:
