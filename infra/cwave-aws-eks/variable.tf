@@ -10,6 +10,11 @@ variable "vpc_name" {
   default     = "cwave"
 }
 
+# private a, b, c 총 3개 물려서 backup으로 사용
+# aws-seoul region에 1개의 VPC가 a, b, c 3개로 나뉨
+  # 그 안에 subnet 하나씩
+    # 각 subnet을 k8s node 3개가 각각 물고 있고,
+    # 이 node가 합쳐져서 k8s cluster로 작용
 variable "availability_zones" {
   description = "Map of AZ suffixes to full AZ names"
   type        = map(string)
