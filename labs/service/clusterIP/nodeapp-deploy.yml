@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       labels:
-        # svc의 selector tag과 동일해야 한다.
+        # svc의 selector tag과 동일해야 한다!!
         app: nodeapp-pod
     spec:
       containers:

@@ -7,6 +7,6 @@ spec:
   ports:
   - port: 80
     targetPort: 8080
-  # deploy의 template/label과 동일해야 selection이 된다.
+  # deploy의 template/label과 동일해야 selection이 된다!!
   selector:
     app: nodeapp-pod
