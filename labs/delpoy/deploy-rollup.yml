@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 10
+  strategy:
+    type: RollingUpdate
+    # scale up 방식의 차이!!
+    # maxSurge를 높여서 갯수 차이를 두는 것 : 기존 서비스를 두고 상한선 up -> resource 비용 up
+    # maxUnavailable을 높여서 갯수 차이를 두는 것 : 기존 걸 죽이면서 capability up
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.29
+        ports:
+        - containerPort: 80
+
+
+# nginx-deployment-854d56bbc7-6klgk   1/1     Terminating  >> 죽이고
+# nginx-deployment-5fc8b94db6-m5fzx   0/1     Pending      >> 살림
+# nginx-deployment-5fc8b94db6-m5fzx   0/1     Pending       0          0s
+# nginx-deployment-5fc8b94db6-m5fzx   0/1     ContainerCreating   >> 컨테이너 생성
+# nginx-deployment-5fc8b94db6-h5wl7   0/1     Pending             0          0s
+# nginx-deployment-5fc8b94db6-h5wl7   0/1     Pending             0          0s
+# nginx-deployment-5fc8b94db6-h5wl7   0/1     ContainerCreating   0          0s
+# nginx-deployment-854d56bbc7-6klgk   0/1     Completed          >> 완료
+# nginx-deployment-5fc8b94db6-m5fzx   1/1     Running           >> running
