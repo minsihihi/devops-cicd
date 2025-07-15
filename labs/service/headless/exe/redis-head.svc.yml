@@ -1,0 +1,42 @@
+# resource 조건
+# StatefulSet 이름: redis-sts
+# Replica: 3개
+# 이미지: redis:7.2
+# Headless Service 이름: redis-head
+# 포트: 6379
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-sts
+spec:
+  serviceName: "redis-head"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7.2
+        ports:
+        - containerPort: 6379
+          name: web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+    name: redis-head
+  # clusterIP: None
+  selector:
+    app: redis

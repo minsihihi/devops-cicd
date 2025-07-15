@@ -1,0 +1,47 @@
+# resource 조건
+# StatefulSet 이름: redis-sts
+# Replica: 3개
+# 이미지: redis:7.2
+# Headless Service 이름: redis-headless
+# 포트: 6379
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-sts
+spec:
+  serviceName: "redis-headless"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7.2
+        ports:
+        - containerPort: 6379
+          name: web
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-headless
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+    name: redis-headless
+  clusterIP: None
+  selector:
+    app: redis
+
+# ping 가는 모습
+# kubectl run redis-client --image=redis:7.2 --rm -it --restart=Never -- redis-cli -h redis-sts-0.redis-headless -p 6379 ping
+# PONG
