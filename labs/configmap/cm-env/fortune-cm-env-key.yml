@@ -1,15 +1,19 @@
-# kubetemp/config-in-yml-pod.yml
-# yml 태그 써서 docker 컨테이너 env로 넘어감
+# key 값으로 env를 받아온다.
+# configmap을 kaymap으로 생성
+# kubetemp/config-fortune-mapenv-key-pod.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: fortune30s
+  name: fortune7s-key
 spec:
   containers:
   - image: dangtong/fortune:env
     env:
     - name: INTERVAL
-      value: "30"
+      valueFrom:
+        configMapKeyRef:
+          name: fortune-config
+          key: sleep-interval # >> 환경변수 INTERVAL에 들어가서, 이 key는 INTERVAL이라는 env로만 조회된다.
     name: html-generator
     volumeMounts:
     - name: html
@@ -26,6 +30,3 @@ spec:
   volumes:
   - name: html
     emptyDir: {}
-
-# kubectl create configmap fortune-config --from-literal=sleep-interval=7 --from-literal=wake-when=12-30
-#                               name
