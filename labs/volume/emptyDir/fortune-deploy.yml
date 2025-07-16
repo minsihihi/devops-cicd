@@ -1,0 +1,63 @@
+# kubetmp/fortune-deploy.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fortune-deployment
+  labels:
+    app: fortune
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fortune
+  template:
+    metadata:
+      labels:
+        app: fortune
+    spec:
+      containers:
+      - image: dangtong/fortune
+        name: html-generator
+        # 2. web-serve에 mount//서로 다른 컨테이너에서 바라본다.
+        # 출력되는 명언을 작성하는 부분
+        volumeMounts:
+        - name: html
+          mountPath: /var/htdocs
+      - image: nginx:alpine
+        name: web-server
+        # 2. html generator에 mount//정의한 html 볼륨을 nginx의 root document에 mount한다.
+        # .sh 대로 명언이 nginx/html에 명언이 뜨게 된다.
+        # 컨텐츠를 조회하는 부분
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html
+          readOnly: true
+        ports:
+          - containerPort: 80
+            protocol: TCP
+      # 1. spec에서 volume을 정의한다.
+      volumes:
+      - name: html
+        emptyDir: {}
+
+# html-generator 조회
+# local:/# kubectl exec -it fortune-deployment-6587756d5f-hrv4l -c html-generator -- bash
+# root@fortune-deployment-6587756d5f-hrv4l:/# cd /var/htdocs
+# root@fortune-deployment-6587756d5f-hrv4l:/var/htdocs# cat index.html
+# Q:      Why is Poland just like the United States?
+# A:      In the United States you can't buy anything for zlotys and in
+#         Poland you can't either, while in the U.S. you can get whatever
+#         you want for dollars, just as you can in Poland.
+#                 -- being told in Poland, 1987
+
+# web-server 조회
+# local:/# kubectl exec -it fortune-deployment-6587756d5f-hrv4l -c web-server -- bash
+# root@6f169e7e2ea4:/code/devops-cicd-apps/labs/volume/emptyDir# kubectl exec -it fortune-deployment-6587756d5f-hrv4l -c web-server -- sh
+# / # cd /usr/share/nginx/html
+# /usr/share/nginx/html # cat index.html
+# Q:      How many journalists does it take to screw in a light bulb?
+# A:      Three.  One to report it as an inspired government program to bring
+#         light to the people, one to report it as a diabolical government plot
+#         to deprive the poor of darkness, and one to win a Pulitzer prize for
+#         reporting that Electric Company hired a light bulb-assassin to break
+#         the bulb in the first place.
