@@ -27,10 +27,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name:  nodeapp-lb
+  # LB는 반드시 annotation이 필요하다.
+  # LB 설정을 써놔야 aws LB controller가 읽고 그에 맞게 LB를 구현한다.
   annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: external
-    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
-    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+    service.beta.kubernetes.io/aws-load-balancer-type: external # VPC 외부 접속 가능
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip # 노드가 아니라 POD ip로 직접 전달
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing # 공인 IP 사용
 spec:
   type: LoadBalancer
   ports:
