@@ -1,0 +1,17 @@
+# pv -> 운영자가 작성 : disk 요청 사항을 작성
+# pvc -> 개발자가 작성 : disk 작성
+
+# pvc.yml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-pvc
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+  - ReadWriteOnce
+  # SCName은 할당하오나, 그 value가 비어있어야 한다. --> name은 PV에서 고른다.
+  # 아예 안쓰면 default storage class인 gp2가 할당된다.
+  storageClassName: ""
