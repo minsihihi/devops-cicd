@@ -1,0 +1,35 @@
+# pv.yml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+   name: mongodb-pv
+spec:
+  capacity:
+    storage: 1Gi
+  # 다양한 storage -> 이를 제어할 수 있는 드라이버
+  # k8s 전용 드라이버 : csi-driver
+  csi:
+    driver: ebs.csi.aws.com
+    fsType: ext4
+    # aws ec2 describe-volumes --filters Name=status,Values=available Name=availability-zone,Values=ap-northeast-2a
+    # 위 cmd로 volume 조회
+    volumeHandle: vol-0ce3f0b3ba7e64973
+  # RWMany는 지원 안함
+  accessModes:
+  - ReadWriteOnce
+  # pod가 죽어도 유지해라 : retain (주로 DB 서비스에서 사용)
+  # pod가 죽으면 삭제해라 : delete
+  # pod가 죽으면 포맷해라 : format
+  persistentVolumeReclaimPolicy: Retain
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            # disk == zonal resource
+            # aws zone을 고정해줘서 -> pod가 뜰 때 disk를 물 수 있는 node에 뜬다. => 아무리 pod를 되살려도 특정 zone에 있는 node들이만 뜬다.
+            - key: topology.ebs.csi.aws.com/zone
+              operator: In
+              # 그래서 no가 무슨 zone을 물고 있는지 확인을 하고, 물고 있는 zone을 할당해야함
+              # b, c를 물면 2개를 써도 되는가? -> 안됨, disk == zonal resource
+              values:
+                - ap-northeast-2c
