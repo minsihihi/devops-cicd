@@ -1,0 +1,32 @@
+# 기존 StatefulSet과 연동되는 Headless Service를 생성하고, 개별 Pod에 접근하는 방법을 확인
+
+# Service 이름: nginx
+# 포트: 80
+# Headless Service (clusterIP: None)
+# Selector: app=nginx
+
+
+apiVersion: v1
+kind: Service
+metadata:
+    name: nginx
+    labels:
+      app: nginx
+spec:
+    ports:
+    - port: 80
+      name: web
+    clusterIP: None
+    selector:
+        app: nginx
+
+
+
+# kubectl run test-dns --image=busybox --rm -it --restart=Never -- nslookup nginx
+# domain 3개 가져옴
+# Name:   nginx.statefulset-lab.svc.cluster.local
+# Address: 10.1.5.198
+# Name:   nginx.statefulset-lab.svc.cluster.local
+# Address: 10.1.6.163
+# Name:   nginx.statefulset-lab.svc.cluster.local
+# Address: 10.1.6.233
