@@ -1,0 +1,22 @@
+# kubetemp/configmap-volume-file-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-configvol
+spec:
+  containers:
+  - image: nginx:1.7.9
+    name: web-server
+    volumeMounts:
+    - name: config
+      mountPath: /etc/nginx/conf.d/default.conf
+      subPath: custom-nginx-config.conf
+      readOnly: true
+    ports:
+    - containerPort: 8080
+      protocol: TCP
+  volumes:
+  - name: config
+    configMap:
+      name: nginx-config
+      defaultMode: 0660

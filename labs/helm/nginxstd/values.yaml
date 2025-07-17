@@ -1,0 +1,9 @@
+# 여기 있는 변수는 다 변경 가능
+
+environment: development
+container:
+  name: nginx
+  port: 80
+  image: nginx
+  tag: latest
+replicas: 2

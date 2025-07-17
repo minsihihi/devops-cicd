@@ -29,4 +29,4 @@ spec:
 # Name:   nginx.statefulset-lab.svc.cluster.local
 # Address: 10.1.6.163
 # Name:   nginx.statefulset-lab.svc.cluster.local
-# Address: 10.1.6.233
+# Address: 10.1.6.
